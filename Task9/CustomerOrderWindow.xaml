@@ -1,0 +1,188 @@
+﻿<Window x:Class="Task9.CustomerOrderWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Task9"
+        xmlns:converter="clr-namespace:Task9.ValueConverter"
+        mc:Ignorable="d"
+        Title="CustomerOrderWindow" Height="700" Width="1300" MinHeight="750" MinWidth="1100">
+    <Grid>
+        <Grid.Resources>
+            <converter:DateConverter x:Key="DateConverter"/>
+            <converter:NumberConverter x:Key="NumberConverter"/>
+            <Style TargetType="TextBox" x:Key="TextBoxStyle">
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="True">
+                        <Setter Property="Margin" Value="0 0 0 5"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <ControlTemplate x:Key="ValidationErrorTemplate">
+                <StackPanel>
+                    <AdornedElementPlaceholder x:Name="textBox" Margin="10" />
+                    <ItemsControl ItemsSource="{Binding}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ErrorContent}" Foreground="Red" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ControlTemplate>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <WrapPanel Background="Aqua">
+                <StackPanel Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select User :"/>
+                    <ComboBox Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" SelectedItem="{Binding Path=AddViewModel.SelectedCustomer}" ItemsSource="{Binding Path=SharedData.CustomerList}" DisplayMemberPath="Username" FontSize="15" Width="100"/>
+                </StackPanel>
+                <StackPanel Margin="10 0 0 0" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" FontSize="15" Content="Product List :"/>
+                    <ComboBox VerticalAlignment="Center" Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" SelectedItem="{Binding Path=AddViewModel.SelectedProduct}" ItemsSource="{Binding Path=SharedData.ProductList}" DisplayMemberPath="Name" FontSize="15" Width="100"/>
+                    <Label VerticalAlignment="Center" FontSize="15" Content="Amount :"/>
+                    <Slider VerticalAlignment="Center" AutoToolTipPlacement="BottomRight" Value="{Binding Path=AddViewModel.Amount}" Minimum="1" Margin="5 0 0 0" Maximum="100" Width="50"/>
+                    <Button VerticalAlignment="Center" Command="{Binding Path=AddViewModel.AddProduct}" FontSize="15" Content="Add new Product"/>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <ListView ItemsSource="{Binding Path=AddViewModel.SelectedProducts}">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="Auto" Header="Product name" DisplayMemberBinding="{Binding NameOfProduct}"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </StackPanel>
+                <StackPanel Margin="180 10 0 0" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Comment :"/>
+                    <TextBox Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" Text="{Binding Path=AddViewModel.Comment,UpdateSourceTrigger=PropertyChanged}" FontSize="15" Width="200" Height="60"/>
+                    <Button Command="{Binding Path=AddViewModel.AddOrder}" FontSize="15" Content="Add Order" Height="40" Margin="10 0 0 0"/>
+                </StackPanel>
+                <StackPanel Margin="180 10 0 0" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Choose payment method :"/>
+                    <RadioButton IsChecked="{Binding Path=AddViewModel.OnSpot}" FontSize="15" VerticalAlignment="Center" Content="OnSpot"/>
+                    <RadioButton FontSize="15" VerticalAlignment="Center" Content="Online"/>
+                    <Label FontSize="15" Content="Total Price :"/>
+                    <Label FontSize="15" Content="{Binding Path=AddViewModel.TotalPrice,Mode=TwoWay}"/>
+                </StackPanel>
+            </WrapPanel>
+            <WrapPanel Grid.Row="1" Background="Beige">
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select user :"/>
+                    <ComboBox SelectedItem="{Binding Path=UpdateViewModel.SelectedUser,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=SharedData.CustomerList}" DisplayMemberPath="Username" FontSize="15" Width="100"/>
+                </StackPanel>
+                <StackPanel Margin="5" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select order :"/>
+                    <ComboBox SelectedItem="{Binding Path=UpdateViewModel.SelectedOrder,UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding Path=UpdateViewModel.SelectOrderIsEnabled}" ItemsSource="{Binding Path=UpdateViewModel.Orders}" FontSize="15" Width="100"/>
+                </StackPanel>
+                <StackPanel Margin="5" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select product for delete :"/>
+                    <ComboBox IsEnabled="{Binding Path=UpdateViewModel.ChangingIsEnabled,Mode=TwoWay}" SelectedItem="{Binding Path=UpdateViewModel.SelectRemoveProduct,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=UpdateViewModel.ProductsForRemove}" DisplayMemberPath="Name" FontSize="15" Width="100"/>
+                </StackPanel>
+                <StackPanel Margin="5" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select product for add :"/>
+                    <ComboBox SelectedItem="{Binding Path=UpdateViewModel.SelectAddProduct,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=SharedData.ProductList}" DisplayMemberPath="Name" FontSize="15" Width="100"/>
+                </StackPanel>
+                <StackPanel Margin="20 10 0 0" Orientation="Horizontal">
+                    <Button Command="{Binding Path=UpdateViewModel.AddCommand}" Margin="5" FontSize="15" Content="Add product"/>
+                    <Button Command="{Binding Path=UpdateViewModel.RemoveCommand}" Margin="5" FontSize="15" Content="Delete product"/>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Amount"/>
+                    <Slider Value="{Binding Path=UpdateViewModel.Amount}" Minimum="1" Maximum="100" Width="50" AutoToolTipPlacement="BottomRight"/>
+                    <Label FontSize="15" Content="Comment :"/>
+                    <TextBox Text="{Binding Path=UpdateViewModel.Comment}" FontSize="15" Width="200" Height="60"/>
+                    <Label FontSize="15" Content="TotalPriceForAdd :"/>
+                    <Label FontSize="15" Content="{Binding Path=UpdateViewModel.TotalPriceAdd}"/>
+                    <Label FontSize="15" Content="TotalPriceForRemove :"/>
+                    <Label FontSize="15" Content="{Binding Path=UpdateViewModel.TotalPriceRemove}"/>
+                </StackPanel>
+            </WrapPanel>
+            <WrapPanel Grid.Row="2" Background="LightGray">
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select user :"/>
+                    <ComboBox SelectedItem="{Binding Path=DeleteViewModel.SelectedUser,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=SharedData.CustomerList}" DisplayMemberPath="Username" FontSize="15" Width="100"/>
+                </StackPanel>
+                <StackPanel Margin="10" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select order :"/>
+                    <ComboBox SelectedItem="{Binding Path=DeleteViewModel.SelectedOrder}" ItemsSource="{Binding Path=DeleteViewModel.Orders}" IsEnabled="{Binding Path=DeleteViewModel.SelectOrderIsEnabled}"  FontSize="15" Width="100"/>
+                </StackPanel>
+                <Button Command="{Binding Path=DeleteViewModel.DeleteCommand}" Margin="20 0 0 0" Height="30" FontSize="15" Content="Delete order"/>
+            </WrapPanel>
+            <WrapPanel Grid.Row="3" Background="LightSlateGray">
+                <StackPanel Orientation="Horizontal" Margin="10">
+                    <Label FontSize="15" Content="Start Date :"/>
+                    <DatePicker Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" SelectedDate="{Binding Path=GetByDateViewModel.StartDate,UpdateSourceTrigger=PropertyChanged}"></DatePicker>
+                    <Label FontSize="15" Content="End Date :"/>
+                    <DatePicker Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" SelectedDate="{Binding Path=GetByDateViewModel.EndDate,UpdateSourceTrigger=PropertyChanged}"></DatePicker>
+                    <Button Command="{Binding Path=GetByDateViewModel.GetByDateCommand}" Margin="10 0 0 0" FontSize="15" Content="GetOrders"/>
+                </StackPanel>
+            </WrapPanel>
+            <WrapPanel Grid.Row="4" Background="SpringGreen">
+                <StackPanel Margin="20" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select Product :"/>
+                    <ComboBox SelectedItem="{Binding Path=GetOrderByProduct.SelectedProduct,UpdateSourceTrigger=PropertyChanged}" FontSize="15" Width="100" ItemsSource="{Binding Path=SharedData.ProductList}" DisplayMemberPath="Name"/>
+                    <Button Command="{Binding Path=GetOrderByProduct.GetOrderByProductCommand}" Margin="10 0 0 0" FontSize="15" Content="GetOrders"/>
+                </StackPanel>
+            </WrapPanel>
+            <WrapPanel Grid.Row="5" Background="Turquoise">
+                <StackPanel Orientation="Horizontal" Margin="20">
+                    <Label FontSize="15" Content="Add Price :"/>
+                    <TextBox Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" Text="{Binding Path=GetOrderByPrice.Price,Converter={StaticResource NumberConverter},UpdateSourceTrigger=PropertyChanged}" FontSize="15" Width="200"/>
+                    <RadioButton IsChecked="{Binding Path=GetOrderByPrice.Upper}" Margin="20 0 0 0" VerticalAlignment="Center" Content="Upper" FontSize="15"/>
+                    <RadioButton VerticalAlignment="Center" Content="Lower" FontSize="15"/>
+                    <Button Command="{Binding Path=GetOrderByPrice.GetOrderCommand}" Margin="20 0 0 0" FontSize="15" Content="GetOrders"/>
+                </StackPanel>
+            </WrapPanel>
+            <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="6" Background="AliceBlue">
+                <StackPanel Orientation="Horizontal">
+                    <Button Height="50" Width="200" Grid.Row="1" FontSize="15" Command="{Binding Path=AllOrderViewModel.GetAllCommand}" Content="Get All orders"/>
+                </StackPanel>
+            </WrapPanel>
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <ListView ItemsSource="{Binding Path=SharedData.Orders}">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Customername" DisplayMemberBinding="{Binding CustomerName}"></GridViewColumn>
+                        <GridViewColumn Header="Products">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ListBox ItemsSource="{Binding Products}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Amount">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <ListBox ItemsSource="{Binding Amount}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="DateOrderPlaced" DisplayMemberBinding="{Binding DateOrderPlaced,Converter={StaticResource DateConverter}}"></GridViewColumn>
+                        <GridViewColumn Header="Price" DisplayMemberBinding="{Binding Price}"></GridViewColumn>
+                        <GridViewColumn Header="OrderStatus" DisplayMemberBinding="{Binding OrderStatus}"></GridViewColumn>
+                        <GridViewColumn Header="PaymentMethod" DisplayMemberBinding="{Binding Paymentmethod}"></GridViewColumn>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </Grid>
+</Window>

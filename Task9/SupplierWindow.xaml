@@ -1,0 +1,62 @@
+﻿<Window x:Class="Task9.SupplierWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Task9"
+        mc:Ignorable="d"
+        Title="SupplierWindow" Height="450" Width="800">
+    <Grid>
+        <Grid.Resources>
+            <Style TargetType="TextBox" x:Key="TextBoxStyle">
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="True">
+                        <Setter Property="Margin" Value="0 0 0 5"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <ControlTemplate x:Key="ValidationErrorTemplate">
+                <StackPanel>
+                    <AdornedElementPlaceholder x:Name="textBox" />
+                    <ItemsControl ItemsSource="{Binding}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ErrorContent}" Foreground="Red" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ControlTemplate>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <WrapPanel Margin="20" Background="Aqua">
+                    <Label Margin="0 30 0 0" FontSize="15" Content="Supplier Name :"/>
+                    <TextBox Style="{StaticResource TextBoxStyle}" Text="{Binding Path=AddSupplierViewModel.SupplierName,UpdateSourceTrigger=PropertyChanged}" Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" Margin="0 30 0 0" Grid.Row="1" FontSize="15" Width="200"/>
+                </WrapPanel>
+                <Button Command="{Binding Path=AddSupplierViewModel.AddCommand}" Margin="20" Grid.Row="1" FontSize="15" Content="Add new Supplier"/>
+            </Grid>
+            <Button Command="{Binding Path=GetAllSupplierViewModel.GetCommand}" Margin="50" Grid.Row="1" FontSize="15" Content="Get All suppliers"/>
+        </Grid>
+        <ListView Grid.Column="1" ItemsSource="{Binding Path=GetAllSupplierViewModel.SupplierList}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="SupplierId" Width="100" DisplayMemberBinding="{Binding SupplierID}"></GridViewColumn>
+                    <GridViewColumn Header="SupplierName" Width="200" DisplayMemberBinding="{Binding SupplierName}"></GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>

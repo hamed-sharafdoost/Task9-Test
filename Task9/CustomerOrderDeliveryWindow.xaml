@@ -1,0 +1,73 @@
+﻿<Window x:Class="Task9.CustomerOrderDeliveryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Task9" xmlns:converter="clr-namespace:Task9.ValueConverter"
+        mc:Ignorable="d"
+        Title="CustomerOrderDeliveryWindow" Height="600" Width="900" MinHeight="500" MinWidth="800">
+    <Grid>
+        <Grid.Resources>
+            <converter:DateConverter x:Key="DateConverter"/>
+            <converter:NumberConverter x:Key="NumberConverter"/>
+            <Style TargetType="TextBox" x:Key="TextBoxStyle">
+                <Style.Triggers>
+                    <Trigger Property="Validation.HasError" Value="True">
+                        <Setter Property="Margin" Value="0 0 0 5"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+            <ControlTemplate x:Key="ValidationErrorTemplate">
+                <StackPanel>
+                    <AdornedElementPlaceholder x:Name="textBox" Margin="10" />
+                    <ItemsControl ItemsSource="{Binding}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ErrorContent}" Foreground="Red" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </ControlTemplate>
+        </Grid.Resources>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <WrapPanel Background="Aqua">
+                <StackPanel Margin="20" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select User :"/>
+                    <ComboBox Validation.ErrorTemplate="{StaticResource ValidationErrorTemplate}" SelectedItem="{Binding Path=AddDeliveryModel.SelectedUser,UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding Path=SharedData.CustomerList}" DisplayMemberPath="Username" FontSize="15" Width="100"/>
+                </StackPanel>
+                <StackPanel Margin="20" Orientation="Horizontal">
+                    <Label FontSize="15" Content="Select Order :"/>
+                    <ComboBox IsEnabled="{Binding Path=AddDeliveryModel.SelectOrderIsEnabled}" SelectedItem="{Binding Path=AddDeliveryModel.SelectedOrder}" ItemsSource="{Binding Path=AddDeliveryModel.Orders}" FontSize="15" Width="100"/>
+                </StackPanel>
+                <StackPanel Margin="20" Orientation="Horizontal">
+                    <Label VerticalAlignment="Center" FontSize="15" Content="Choose Order State Delivery :"/>
+                    <RadioButton IsChecked="{Binding Path=AddDeliveryModel.IsDelivered}" VerticalAlignment="Center" Content="Delivered" FontSize="15"/>
+                    <RadioButton VerticalAlignment="Center" Content="Sending" FontSize="15"/>
+                </StackPanel>
+                <Button Command="{Binding Path=AddDeliveryModel.AddOrderDeliveryCommand}" Margin="20" FontSize="15" Content="Add Order Delivery Status"/>
+            </WrapPanel>
+            <StackPanel Grid.Row="1" Background="AliceBlue">
+                <Button Command="{Binding Path=GetDeliveryModel.GetDeliveryCommand}" Margin="100" FontSize="15" Content="Get All Order Delivery"/>
+            </StackPanel>
+        </Grid>
+        <ListView Grid.Column="1" ItemsSource="{Binding Path=GetDeliveryModel.CustomizedOrders}">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="CustomerName" Width="100" DisplayMemberBinding="{Binding CustomerName}"></GridViewColumn>
+                    <GridViewColumn Header="DateOrderPlaced" DisplayMemberBinding="{Binding DateOrderPlaced,Converter={StaticResource DateConverter}}"></GridViewColumn>
+                    <GridViewColumn Header="OrderPrice" DisplayMemberBinding="{Binding OrderPrice}"></GridViewColumn>
+                    <GridViewColumn Header="DeliveryStatus" DisplayMemberBinding="{Binding DeliveryStatus}"></GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Window>
